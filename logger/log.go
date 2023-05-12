@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/olivere/elastic/v7"
 	"github.com/sirupsen/logrus"
 )
 
@@ -39,7 +40,7 @@ func NewLogger(elasticURL []string, file string) error {
 	logrusLogger.SetFormatter(&logrus.JSONFormatter{})
 
 	// Initialize elastic client
-	esClient, err := elastic.NewClient(elastic.SetURL(elasticURL))
+	esClient, err := elastic.NewClient(elastic.SetURL(elasticURL...))
 	if err != nil {
 		return err
 	}
