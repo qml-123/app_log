@@ -60,7 +60,6 @@ func NewLogger(elasticURL []string, file string) error {
 	esClient, err := elastic.NewClient(
 		elastic.SetURL(elasticURL...),
 		elastic.SetHttpClient(httpClient),
-		elastic.SetBasicAuth("elastic", "FOWrYfQbfnRa1_WMepPk"),
 	)
 	if err != nil {
 		return err
