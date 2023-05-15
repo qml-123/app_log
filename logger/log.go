@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"runtime"
@@ -68,11 +69,17 @@ func NewLogger(elasticURL []string, file string) error {
 	}
 
 	// Set output file
+	// Open the log file
 	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
 		return err
 	}
-	_logrus.SetOutput(f)
+
+	// Create a multi-writer that writes to both the file and stdout
+	multiWriter := io.MultiWriter(f, os.Stdout)
+
+	// Set the log output to the multi-writer
+	_logrus.SetOutput(multiWriter)
 
 	logsCh = make(chan *LogData, 100)
 
