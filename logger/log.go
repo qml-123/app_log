@@ -51,7 +51,8 @@ func NewLogger(elasticURL []string, file string) error {
 	httpClient := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
-				Certificates: []tls.Certificate{cert},
+				InsecureSkipVerify: true, // 跳过证书验证
+				Certificates:       []tls.Certificate{cert},
 			},
 		},
 	}
