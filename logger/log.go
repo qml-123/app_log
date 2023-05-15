@@ -38,8 +38,8 @@ type LogData struct {
 
 func NewLogger(elasticURL []string, file string) error {
 	// Initialize logrus
-	logrusLogger := logrus.New()
-	logrusLogger.SetFormatter(&logrus.JSONFormatter{})
+	_logrus = logrus.New()
+	_logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	// Initialize elastic client
 	cert, err := tls.LoadX509KeyPair("output/bin/http_ca.crt", "output/bin/http_ca.key")
@@ -58,7 +58,7 @@ func NewLogger(elasticURL []string, file string) error {
 	}
 
 	// 初始化ES客户端并设置自定义的HTTP客户端
-	esClient, err := elastic.NewClient(
+	elasticClient, err = elastic.NewClient(
 		elastic.SetURL(elasticURL...),
 		elastic.SetHttpClient(httpClient),
 		elastic.SetBasicAuth("elastic", "FOWrYfQbfnRa1_WMepPk"),
@@ -72,10 +72,8 @@ func NewLogger(elasticURL []string, file string) error {
 	if err != nil {
 		return err
 	}
-	logrusLogger.SetOutput(f)
+	_logrus.SetOutput(f)
 
-	_logrus = logrusLogger
-	elasticClient = esClient
 	logsCh = make(chan *LogData, 100)
 
 	// Start a goroutine to handle logs

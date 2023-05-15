@@ -1,6 +1,6 @@
 module github.com/qml-123/app_log
 
-go 1.20
+go 1.18
 
 require (
 	github.com/cloudwego/kitex v0.5.2
