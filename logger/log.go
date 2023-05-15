@@ -88,7 +88,7 @@ func log(ctx context.Context, level, format string, v ...interface{}) {
 	//funcName := runtime.FuncForPC(pc).Name()
 
 	// Get values from context
-	serviceName := os.Getenv("service_name")
+	serviceName, _ := ctx.Value("service_name").(string)
 	logID, _ := ctx.Value("log_id").(string)
 	locate, _ := ctx.Value("locate").(string)
 
