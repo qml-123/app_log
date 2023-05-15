@@ -42,25 +42,33 @@ func NewLogger(elasticURL []string, file string) error {
 	logrusLogger.SetFormatter(&logrus.JSONFormatter{})
 
 	// Initialize elastic client
-	cert, err := tls.LoadX509KeyPair("output/bin/http_ca.crt", "output/bin/http_ca.key")
-	if err != nil {
-		return err
-	}
+	//cert, err := tls.LoadX509KeyPair("output/bin/http_ca.crt", "output/bin/http_ca.key")
+	//if err != nil {
+	//	return err
+	//}
 
 	// 创建HTTP客户端并添加子签名证书
-	httpClient := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true, // 跳过证书验证
-				Certificates:       []tls.Certificate{cert},
-			},
-		},
-	}
+	//httpClient := &http.Client{
+	//	Transport: &http.Transport{
+	//		TLSClientConfig: &tls.Config{
+	//			InsecureSkipVerify: true, // 跳过证书验证
+	//			Certificates:       []tls.Certificate{cert},
+	//		},
+	//	},
+	//}
 
-	// 初始化ES客户端并设置自定义的HTTP客户端
+	// 创建一个忽略SSL证书验证的HTTP客户端
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	httpClient := &http.Client{Transport: tr}
+
+	// 创建Elasticsearch客户端
 	esClient, err := elastic.NewClient(
 		elastic.SetURL(elasticURL...),
 		elastic.SetHttpClient(httpClient),
+		elastic.SetSniff(false),
+		elastic.SetHealthcheck(false),
 		elastic.SetBasicAuth("elastic", "FOWrYfQbfnRa1_WMepPk"),
 	)
 	if err != nil {
