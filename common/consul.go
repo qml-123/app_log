@@ -25,6 +25,7 @@ func InitConsul(addr net.Addr, conf *Conf) error {
 	}); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -36,6 +37,7 @@ func CloseConsul(addr net.Addr, conf *Conf) error {
 	if err != nil {
 		return err
 	}
+
 	if err = r.Deregister(&registry.Info{
 		ServiceName: conf.ServiceName,
 		Addr:        addr,
@@ -44,5 +46,6 @@ func CloseConsul(addr net.Addr, conf *Conf) error {
 	}); err != nil {
 		return err
 	}
+
 	return nil
 }
