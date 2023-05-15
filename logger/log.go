@@ -88,7 +88,7 @@ func log(ctx context.Context, level, format string, v ...interface{}) {
 	//funcName := runtime.FuncForPC(pc).Name()
 
 	// Get values from context
-	serviceName, _ := ctx.Value("service_name").(string)
+	//serviceName, _ := ctx.Value("service_name").(string)
 	logID, _ := ctx.Value("log_id").(string)
 	locate, _ := ctx.Value("locate").(string)
 
@@ -96,8 +96,8 @@ func log(ctx context.Context, level, format string, v ...interface{}) {
 	buf := make([]byte, 1024)
 	runtime.Stack(buf, false)
 	data := &LogData{
-		Locate:         locate,
-		ServiceName:    serviceName,
+		Locate: locate,
+		//ServiceName:    serviceName,
 		LogID:          logID,
 		LogLevel:       level,
 		LogMessage:     fmt.Sprintf(format, v...),
@@ -115,7 +115,7 @@ func log(ctx context.Context, level, format string, v ...interface{}) {
 
 	// Write to logrus
 	_logrus.WithFields(logrus.Fields{
-		"service_name":    serviceName,
+		//"service_name":    serviceName,
 		"log_id":          logID,
 		"log_message":     data.LogMessage,
 		"execution_stack": data.ExecutionStack,
