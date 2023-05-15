@@ -21,6 +21,8 @@ func (e *StatusError) Error() string {
 var (
 	InternalError = NewStatus(1, "internal error")
 
+	InvalidToken = NewStatus(2, "token is expired, please login again")
+
 	InvalidParam = NewStatus(10000, "invalid param")
 
 	RegisterNameDuplicate = NewStatus(10001, "username is already registered")

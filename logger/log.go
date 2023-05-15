@@ -2,7 +2,9 @@ package logger
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"net/http"
 	"os"
 	"runtime"
 	"sync"
@@ -40,7 +42,26 @@ func NewLogger(elasticURL []string, file string) error {
 	logrusLogger.SetFormatter(&logrus.JSONFormatter{})
 
 	// Initialize elastic client
-	esClient, err := elastic.NewClient(elastic.SetURL(elasticURL...))
+	cert, err := tls.LoadX509KeyPair("output/bin/http_ca.crt", "output/bin/http_ca.key")
+	if err != nil {
+		return err
+	}
+
+	// 创建HTTP客户端并添加子签名证书
+	httpClient := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				Certificates: []tls.Certificate{cert},
+			},
+		},
+	}
+
+	// 初始化ES客户端并设置自定义的HTTP客户端
+	esClient, err := elastic.NewClient(
+		elastic.SetURL(elasticURL...),
+		elastic.SetHttpClient(httpClient),
+		elastic.SetBasicAuth("elastic", "FOWrYfQbfnRa1_WMepPk"),
+	)
 	if err != nil {
 		return err
 	}
