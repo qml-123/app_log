@@ -11,7 +11,7 @@ import (
 	"github.com/apache/thrift/lib/go/thrift"
 
 	"github.com/cloudwego/kitex/pkg/protocol/bthrift"
-	"github.com/qml-123/es_log/kitex_gen/base"
+	"github.com/qml-123/app_log/kitex_gen/base"
 )
 
 // unused protection

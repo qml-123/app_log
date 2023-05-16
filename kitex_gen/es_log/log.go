@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/apache/thrift/lib/go/thrift"
-	"github.com/qml-123/es_log/kitex_gen/base"
+	"github.com/qml-123/app_log/kitex_gen/base"
 )
 
 type SearchRequest struct {
