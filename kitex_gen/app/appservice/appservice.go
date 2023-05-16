@@ -4,10 +4,9 @@ package appservice
 
 import (
 	"context"
-
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
-	"github.com/qml-123/app_log/kitex_gen/app"
+	app "github.com/qml-123/app_log/kitex_gen/app"
 )
 
 func serviceInfo() *kitex.ServiceInfo {
@@ -20,11 +19,12 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "AppService"
 	handlerType := (*app.AppService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Ping":     kitex.NewMethodInfo(pingHandler, newAppServicePingArgs, newAppServicePingResult, false),
-		"GetFile":  kitex.NewMethodInfo(getFileHandler, newAppServiceGetFileArgs, newAppServiceGetFileResult, false),
-		"Upload":   kitex.NewMethodInfo(uploadHandler, newAppServiceUploadArgs, newAppServiceUploadResult, false),
-		"Register": kitex.NewMethodInfo(registerHandler, newAppServiceRegisterArgs, newAppServiceRegisterResult, false),
-		"Login":    kitex.NewMethodInfo(loginHandler, newAppServiceLoginArgs, newAppServiceLoginResult, false),
+		"Ping":       kitex.NewMethodInfo(pingHandler, newAppServicePingArgs, newAppServicePingResult, false),
+		"GetFile":    kitex.NewMethodInfo(getFileHandler, newAppServiceGetFileArgs, newAppServiceGetFileResult, false),
+		"Upload":     kitex.NewMethodInfo(uploadHandler, newAppServiceUploadArgs, newAppServiceUploadResult, false),
+		"GetFileKey": kitex.NewMethodInfo(getFileKeyHandler, newAppServiceGetFileKeyArgs, newAppServiceGetFileKeyResult, false),
+		"Register":   kitex.NewMethodInfo(registerHandler, newAppServiceRegisterArgs, newAppServiceRegisterResult, false),
+		"Login":      kitex.NewMethodInfo(loginHandler, newAppServiceLoginArgs, newAppServiceLoginResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "app",
@@ -92,6 +92,24 @@ func newAppServiceUploadArgs() interface{} {
 
 func newAppServiceUploadResult() interface{} {
 	return app.NewAppServiceUploadResult()
+}
+
+func getFileKeyHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*app.AppServiceGetFileKeyArgs)
+	realResult := result.(*app.AppServiceGetFileKeyResult)
+	success, err := handler.(app.AppService).GetFileKey(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newAppServiceGetFileKeyArgs() interface{} {
+	return app.NewAppServiceGetFileKeyArgs()
+}
+
+func newAppServiceGetFileKeyResult() interface{} {
+	return app.NewAppServiceGetFileKeyResult()
 }
 
 func registerHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -165,6 +183,16 @@ func (p *kClient) Upload(ctx context.Context, req *app.UploadFileRequest) (r *ap
 	_args.Req = req
 	var _result app.AppServiceUploadResult
 	if err = p.c.Call(ctx, "Upload", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetFileKey(ctx context.Context, req *app.GetFileRequest) (r *app.GetFileKeyResponse, err error) {
+	var _args app.AppServiceGetFileKeyArgs
+	_args.Req = req
+	var _result app.AppServiceGetFileKeyResult
+	if err = p.c.Call(ctx, "GetFileKey", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
