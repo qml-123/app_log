@@ -3,7 +3,7 @@ package appservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	"github.com/qml-123/app_log/kitex_gen/app"
+	app "github.com/qml-123/app_log/kitex_gen/app"
 )
 
 // NewServer creates a server.Server with the given handler and options.
