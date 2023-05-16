@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/apache/thrift/lib/go/thrift"
-	base2 "github.com/qml-123/app_log/kitex_gen/base"
 
 	"github.com/cloudwego/kitex/pkg/protocol/bthrift"
+	"github.com/qml-123/app_log/kitex_gen/base"
 )
 
 // unused protection
@@ -22,7 +22,7 @@ var (
 	_ = reflect.Type(nil)
 	_ = thrift.TProtocol(nil)
 	_ = bthrift.BinaryWriter(nil)
-	_ = base2.KitexUnusedProtection
+	_ = base.KitexUnusedProtection
 )
 
 func (p *PingRequest) FastRead(buf []byte) (int, error) {
@@ -214,7 +214,7 @@ func (p *PingResponse) FastReadField1(buf []byte) (int, error) {
 func (p *PingResponse) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -287,14 +287,196 @@ func (p *PingResponse) field255Length() int {
 	return l
 }
 
-func (p *UploadFileRequest) FastRead(buf []byte) (int, error) {
+func (p *GetFileKeyRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetUserId bool = false
-	var issetFile bool = false
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetUserId = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField255(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetUserId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetFileKeyRequest[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_GetFileKeyRequest[fieldId]))
+}
+
+func (p *GetFileKeyRequest) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.UserId = v
+
+	}
+	return offset, nil
+}
+
+func (p *GetFileKeyRequest) FastReadField255(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := base.NewBaseData()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseData = tmp
+	return offset, nil
+}
+
+// for compatibility
+func (p *GetFileKeyRequest) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *GetFileKeyRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "GetFileKeyRequest")
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField255(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileKeyRequest) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("GetFileKeyRequest")
+	if p != nil {
+		l += p.field1Length()
+		l += p.field255Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *GetFileKeyRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.I64, 1)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.UserId)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileKeyRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "baseData", thrift.STRUCT, 255)
+	offset += p.BaseData.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileKeyRequest) field1Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
+	l += bthrift.Binary.I64Length(p.UserId)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileKeyRequest) field255Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("baseData", thrift.STRUCT, 255)
+	l += p.BaseData.BLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileKeyResponse) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetFileKey bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -318,6 +500,195 @@ func (p *UploadFileRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetFileKey = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField255(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetFileKey {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetFileKeyResponse[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_GetFileKeyResponse[fieldId]))
+}
+
+func (p *GetFileKeyResponse) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.FileKey = v
+
+	}
+	return offset, nil
+}
+
+func (p *GetFileKeyResponse) FastReadField255(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := base.NewBaseData()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseData = tmp
+	return offset, nil
+}
+
+// for compatibility
+func (p *GetFileKeyResponse) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *GetFileKeyResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "GetFileKeyResponse")
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField255(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileKeyResponse) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("GetFileKeyResponse")
+	if p != nil {
+		l += p.field1Length()
+		l += p.field255Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *GetFileKeyResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_key", thrift.STRING, 1)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileKey)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileKeyResponse) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "baseData", thrift.STRUCT, 255)
+	offset += p.BaseData.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileKeyResponse) field1Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("file_key", thrift.STRING, 1)
+	l += bthrift.Binary.StringLengthNocopy(p.FileKey)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileKeyResponse) field255Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("baseData", thrift.STRUCT, 255)
+	l += p.BaseData.BLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *UploadFileRequest) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetUserId bool = false
+	var issetFile bool = false
+	var issetChunkNum bool = false
+	var issetChunkSize bool = false
+	var issetHasMore bool = false
+	var issetFileKey bool = false
+	var issetFileType bool = false
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
 				issetUserId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
@@ -334,6 +705,81 @@ func (p *UploadFileRequest) FastRead(buf []byte) (int, error) {
 					goto ReadFieldError
 				}
 				issetFile = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetChunkNum = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField4(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetChunkSize = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.BOOL {
+				l, err = p.FastReadField5(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetHasMore = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 6:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField6(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetFileKey = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 7:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField7(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetFileType = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -384,6 +830,31 @@ func (p *UploadFileRequest) FastRead(buf []byte) (int, error) {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
+
+	if !issetChunkNum {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetChunkSize {
+		fieldId = 4
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetHasMore {
+		fieldId = 5
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetFileKey {
+		fieldId = 6
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetFileType {
+		fieldId = 7
+		goto RequiredFieldNotSetError
+	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -404,7 +875,7 @@ RequiredFieldNotSetError:
 func (p *UploadFileRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
@@ -429,10 +900,80 @@ func (p *UploadFileRequest) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *UploadFileRequest) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.ChunkNum = v
+
+	}
+	return offset, nil
+}
+
+func (p *UploadFileRequest) FastReadField4(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.ChunkSize = v
+
+	}
+	return offset, nil
+}
+
+func (p *UploadFileRequest) FastReadField5(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadBool(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.HasMore = v
+
+	}
+	return offset, nil
+}
+
+func (p *UploadFileRequest) FastReadField6(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.FileKey = v
+
+	}
+	return offset, nil
+}
+
+func (p *UploadFileRequest) FastReadField7(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.FileType = v
+
+	}
+	return offset, nil
+}
+
 func (p *UploadFileRequest) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -452,7 +993,12 @@ func (p *UploadFileRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.Bin
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "UploadFileRequest")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
+		offset += p.fastWriteField4(buf[offset:], binaryWriter)
+		offset += p.fastWriteField5(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+		offset += p.fastWriteField6(buf[offset:], binaryWriter)
+		offset += p.fastWriteField7(buf[offset:], binaryWriter)
 		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -466,6 +1012,11 @@ func (p *UploadFileRequest) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field3Length()
+		l += p.field4Length()
+		l += p.field5Length()
+		l += p.field6Length()
+		l += p.field7Length()
 		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
@@ -475,8 +1026,8 @@ func (p *UploadFileRequest) BLength() int {
 
 func (p *UploadFileRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.STRING, 1)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.UserId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.I64, 1)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.UserId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -486,6 +1037,51 @@ func (p *UploadFileRequest) fastWriteField2(buf []byte, binaryWriter bthrift.Bin
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file", thrift.STRING, 2)
 	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.File))
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *UploadFileRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "chunk_num", thrift.I32, 3)
+	offset += bthrift.Binary.WriteI32(buf[offset:], p.ChunkNum)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *UploadFileRequest) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "chunk_size", thrift.I32, 4)
+	offset += bthrift.Binary.WriteI32(buf[offset:], p.ChunkSize)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *UploadFileRequest) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "has_more", thrift.BOOL, 5)
+	offset += bthrift.Binary.WriteBool(buf[offset:], p.HasMore)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *UploadFileRequest) fastWriteField6(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_key", thrift.STRING, 6)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileKey)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *UploadFileRequest) fastWriteField7(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_type", thrift.STRING, 7)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileType)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -501,8 +1097,8 @@ func (p *UploadFileRequest) fastWriteField255(buf []byte, binaryWriter bthrift.B
 
 func (p *UploadFileRequest) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("user_id", thrift.STRING, 1)
-	l += bthrift.Binary.StringLengthNocopy(p.UserId)
+	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
+	l += bthrift.Binary.I64Length(p.UserId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -512,6 +1108,51 @@ func (p *UploadFileRequest) field2Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("file", thrift.STRING, 2)
 	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.File))
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *UploadFileRequest) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("chunk_num", thrift.I32, 3)
+	l += bthrift.Binary.I32Length(p.ChunkNum)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *UploadFileRequest) field4Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("chunk_size", thrift.I32, 4)
+	l += bthrift.Binary.I32Length(p.ChunkSize)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *UploadFileRequest) field5Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("has_more", thrift.BOOL, 5)
+	l += bthrift.Binary.BoolLength(p.HasMore)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *UploadFileRequest) field6Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("file_key", thrift.STRING, 6)
+	l += bthrift.Binary.StringLengthNocopy(p.FileKey)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *UploadFileRequest) field7Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("file_type", thrift.STRING, 7)
+	l += bthrift.Binary.StringLengthNocopy(p.FileType)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -531,7 +1172,6 @@ func (p *UploadFileResponse) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetFileKey bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -548,21 +1188,6 @@ func (p *UploadFileResponse) FastRead(buf []byte) (int, error) {
 			break
 		}
 		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.STRING {
-				l, err = p.FastReadField1(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-				issetFileKey = true
-			} else {
-				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
 		case 255:
 			if fieldTypeId == thrift.STRUCT {
 				l, err = p.FastReadField255(buf[offset:])
@@ -597,10 +1222,6 @@ func (p *UploadFileResponse) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetFileKey {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -614,28 +1235,12 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_UploadFileResponse[fieldId]))
-}
-
-func (p *UploadFileResponse) FastReadField1(buf []byte) (int, error) {
-	offset := 0
-
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-
-		p.FileKey = v
-
-	}
-	return offset, nil
 }
 
 func (p *UploadFileResponse) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -654,7 +1259,6 @@ func (p *UploadFileResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.Bi
 	offset := 0
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "UploadFileResponse")
 	if p != nil {
-		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -666,21 +1270,11 @@ func (p *UploadFileResponse) BLength() int {
 	l := 0
 	l += bthrift.Binary.StructBeginLength("UploadFileResponse")
 	if p != nil {
-		l += p.field1Length()
 		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
 	return l
-}
-
-func (p *UploadFileResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
-	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_key", thrift.STRING, 1)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileKey)
-
-	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
-	return offset
 }
 
 func (p *UploadFileResponse) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
@@ -689,15 +1283,6 @@ func (p *UploadFileResponse) fastWriteField255(buf []byte, binaryWriter bthrift.
 	offset += p.BaseData.FastWriteNocopy(buf[offset:], binaryWriter)
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
-}
-
-func (p *UploadFileResponse) field1Length() int {
-	l := 0
-	l += bthrift.Binary.FieldBeginLength("file_key", thrift.STRING, 1)
-	l += bthrift.Binary.StringLengthNocopy(p.FileKey)
-
-	l += bthrift.Binary.FieldEndLength()
-	return l
 }
 
 func (p *UploadFileResponse) field255Length() int {
@@ -716,6 +1301,7 @@ func (p *GetFileRequest) FastRead(buf []byte) (int, error) {
 	var fieldId int16
 	var issetUserId bool = false
 	var issetFileKey bool = false
+	var issetChunkNum bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -733,7 +1319,7 @@ func (p *GetFileRequest) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -755,6 +1341,35 @@ func (p *GetFileRequest) FastRead(buf []byte) (int, error) {
 					goto ReadFieldError
 				}
 				issetFileKey = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetChunkNum = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField4(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -805,6 +1420,11 @@ func (p *GetFileRequest) FastRead(buf []byte) (int, error) {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
+
+	if !issetChunkNum {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -825,7 +1445,7 @@ RequiredFieldNotSetError:
 func (p *GetFileRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
@@ -850,10 +1470,37 @@ func (p *GetFileRequest) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *GetFileRequest) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.ChunkNum = v
+
+	}
+	return offset, nil
+}
+
+func (p *GetFileRequest) FastReadField4(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		p.ChunkSize = &v
+
+	}
+	return offset, nil
+}
+
 func (p *GetFileRequest) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -873,6 +1520,8 @@ func (p *GetFileRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.Binary
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "GetFileRequest")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
+		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
@@ -887,6 +1536,8 @@ func (p *GetFileRequest) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field3Length()
+		l += p.field4Length()
 		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
@@ -896,8 +1547,8 @@ func (p *GetFileRequest) BLength() int {
 
 func (p *GetFileRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.STRING, 1)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.UserId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.I64, 1)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.UserId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -912,6 +1563,26 @@ func (p *GetFileRequest) fastWriteField2(buf []byte, binaryWriter bthrift.Binary
 	return offset
 }
 
+func (p *GetFileRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "chunk_num", thrift.I32, 3)
+	offset += bthrift.Binary.WriteI32(buf[offset:], p.ChunkNum)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileRequest) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetChunkSize() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "chunk_size", thrift.I32, 4)
+		offset += bthrift.Binary.WriteI32(buf[offset:], *p.ChunkSize)
+
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
 func (p *GetFileRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "baseData", thrift.STRUCT, 255)
@@ -922,8 +1593,8 @@ func (p *GetFileRequest) fastWriteField255(buf []byte, binaryWriter bthrift.Bina
 
 func (p *GetFileRequest) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("user_id", thrift.STRING, 1)
-	l += bthrift.Binary.StringLengthNocopy(p.UserId)
+	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
+	l += bthrift.Binary.I64Length(p.UserId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -935,6 +1606,26 @@ func (p *GetFileRequest) field2Length() int {
 	l += bthrift.Binary.StringLengthNocopy(p.FileKey)
 
 	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileRequest) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("chunk_num", thrift.I32, 3)
+	l += bthrift.Binary.I32Length(p.ChunkNum)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileRequest) field4Length() int {
+	l := 0
+	if p.IsSetChunkSize() {
+		l += bthrift.Binary.FieldBeginLength("chunk_size", thrift.I32, 4)
+		l += bthrift.Binary.I32Length(*p.ChunkSize)
+
+		l += bthrift.Binary.FieldEndLength()
+	}
 	return l
 }
 
@@ -953,6 +1644,9 @@ func (p *GetFileResponse) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetFile bool = false
+	var issetFileType bool = false
+	var issetHasMore bool = false
+	var issetChunkSize bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -977,6 +1671,51 @@ func (p *GetFileResponse) FastRead(buf []byte) (int, error) {
 					goto ReadFieldError
 				}
 				issetFile = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetFileType = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.BOOL {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetHasMore = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField4(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetChunkSize = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1020,6 +1759,21 @@ func (p *GetFileResponse) FastRead(buf []byte) (int, error) {
 
 	if !issetFile {
 		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetFileType {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetHasMore {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetChunkSize {
+		fieldId = 4
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -1053,10 +1807,52 @@ func (p *GetFileResponse) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *GetFileResponse) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.FileType = v
+
+	}
+	return offset, nil
+}
+
+func (p *GetFileResponse) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadBool(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.HasMore = v
+
+	}
+	return offset, nil
+}
+
+func (p *GetFileResponse) FastReadField4(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.ChunkSize = v
+
+	}
+	return offset, nil
+}
+
 func (p *GetFileResponse) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -1075,7 +1871,10 @@ func (p *GetFileResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.Binar
 	offset := 0
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "GetFileResponse")
 	if p != nil {
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
+		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -1088,6 +1887,9 @@ func (p *GetFileResponse) BLength() int {
 	l += bthrift.Binary.StructBeginLength("GetFileResponse")
 	if p != nil {
 		l += p.field1Length()
+		l += p.field2Length()
+		l += p.field3Length()
+		l += p.field4Length()
 		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
@@ -1099,6 +1901,33 @@ func (p *GetFileResponse) fastWriteField1(buf []byte, binaryWriter bthrift.Binar
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file", thrift.STRING, 1)
 	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.File))
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_type", thrift.STRING, 2)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileType)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "has_more", thrift.BOOL, 3)
+	offset += bthrift.Binary.WriteBool(buf[offset:], p.HasMore)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *GetFileResponse) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "chunk_size", thrift.I32, 4)
+	offset += bthrift.Binary.WriteI32(buf[offset:], p.ChunkSize)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -1116,6 +1945,33 @@ func (p *GetFileResponse) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("file", thrift.STRING, 1)
 	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.File))
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileResponse) field2Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("file_type", thrift.STRING, 2)
+	l += bthrift.Binary.StringLengthNocopy(p.FileType)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileResponse) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("has_more", thrift.BOOL, 3)
+	l += bthrift.Binary.BoolLength(p.HasMore)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *GetFileResponse) field4Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("chunk_size", thrift.I32, 4)
+	l += bthrift.Binary.I32Length(p.ChunkSize)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -1328,7 +2184,7 @@ func (p *RegisteRequest) FastReadField4(buf []byte) (int, error) {
 func (p *RegisteRequest) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -1543,7 +2399,7 @@ ReadStructEndError:
 func (p *RegisteResponse) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -1751,7 +2607,7 @@ func (p *LoginRequest) FastReadField3(buf []byte) (int, error) {
 func (p *LoginRequest) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2021,7 +2877,7 @@ func (p *LoginResponse) FastReadField2(buf []byte) (int, error) {
 func (p *LoginResponse) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base2.NewBaseData()
+	tmp := base.NewBaseData()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2888,6 +3744,264 @@ func (p *AppServiceUploadResult) field0Length() int {
 	return l
 }
 
+func (p *AppServiceGetFileKeyArgs) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AppServiceGetFileKeyArgs[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *AppServiceGetFileKeyArgs) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := NewGetFileKeyRequest()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Req = tmp
+	return offset, nil
+}
+
+// for compatibility
+func (p *AppServiceGetFileKeyArgs) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *AppServiceGetFileKeyArgs) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "GetFileKey_args")
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *AppServiceGetFileKeyArgs) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("GetFileKey_args")
+	if p != nil {
+		l += p.field1Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *AppServiceGetFileKeyArgs) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "req", thrift.STRUCT, 1)
+	offset += p.Req.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *AppServiceGetFileKeyArgs) field1Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("req", thrift.STRUCT, 1)
+	l += p.Req.BLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *AppServiceGetFileKeyResult) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField0(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AppServiceGetFileKeyResult[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *AppServiceGetFileKeyResult) FastReadField0(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := NewGetFileKeyResponse()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Success = tmp
+	return offset, nil
+}
+
+// for compatibility
+func (p *AppServiceGetFileKeyResult) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *AppServiceGetFileKeyResult) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "GetFileKey_result")
+	if p != nil {
+		offset += p.fastWriteField0(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *AppServiceGetFileKeyResult) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("GetFileKey_result")
+	if p != nil {
+		l += p.field0Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *AppServiceGetFileKeyResult) fastWriteField0(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetSuccess() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "success", thrift.STRUCT, 0)
+		offset += p.Success.FastWriteNocopy(buf[offset:], binaryWriter)
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
+func (p *AppServiceGetFileKeyResult) field0Length() int {
+	l := 0
+	if p.IsSetSuccess() {
+		l += bthrift.Binary.FieldBeginLength("success", thrift.STRUCT, 0)
+		l += p.Success.BLength()
+		l += bthrift.Binary.FieldEndLength()
+	}
+	return l
+}
+
 func (p *AppServiceRegisterArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
@@ -3425,6 +4539,14 @@ func (p *AppServiceUploadArgs) GetFirstArgument() interface{} {
 }
 
 func (p *AppServiceUploadResult) GetResult() interface{} {
+	return p.Success
+}
+
+func (p *AppServiceGetFileKeyArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+func (p *AppServiceGetFileKeyResult) GetResult() interface{} {
 	return p.Success
 }
 

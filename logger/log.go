@@ -116,16 +116,15 @@ func log(ctx context.Context, level, format string, v ...interface{}) {
 	// Convert string level to logrus.Level
 	logLevel, err := logrus.ParseLevel(level)
 	if err != nil {
-		fmt.Printf("Failed to parse log level: %v\n", err)
+		_logrus.Warn("Failed to parse log level: %v", err)
 		return
 	}
 
 	// Write to logrus
 	_logrus.WithFields(logrus.Fields{
 		//"service_name":    serviceName,
-		"log_id":      logID,
-		"log_message": data.LogMessage,
-		"file_line":   data.FileLine,
+		"log_id":    logID,
+		"file_line": data.FileLine,
 	}).Log(logLevel, data.LogMessage)
 
 	// Write to elasticsearch
@@ -155,13 +154,25 @@ func handleLogs() {
 func sendToElasticsearch(logs []*LogData) {
 	bulkRequest := elasticClient.Bulk()
 	for _, log := range logs {
-		req := elastic.NewBulkIndexRequest().Index("logs").Doc(log)
+		req := elastic.NewBulkIndexRequest().Index("log_index").Doc(log)
 		bulkRequest = bulkRequest.Add(req)
 	}
 
-	_, err := bulkRequest.Do(context.Background())
+	response, err := bulkRequest.Do(context.Background())
 	if err != nil {
-		fmt.Printf("Failed to write logs to Elasticsearch: %v\n", err)
+		_logrus.Log(logrus.WarnLevel, "Failed to write logs to Elasticsearch: %v", err)
+		return
+	}
+
+	if response.Errors {
+		// 打印错误信息
+		for _, item := range response.Items {
+			for _, result := range item {
+				if result.Error != nil {
+					_logrus.Log(logrus.WarnLevel, "Error indexing document: %v", result.Error)
+				}
+			}
+		}
 	}
 
 	wg.Done()
