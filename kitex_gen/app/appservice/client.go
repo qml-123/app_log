@@ -4,10 +4,9 @@ package appservice
 
 import (
 	"context"
-
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
-	"github.com/qml-123/app_log/kitex_gen/app"
+	app "github.com/qml-123/app_log/kitex_gen/app"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
@@ -15,6 +14,7 @@ type Client interface {
 	Ping(ctx context.Context, req *app.PingRequest, callOptions ...callopt.Option) (r *app.PingResponse, err error)
 	GetFile(ctx context.Context, req *app.GetFileRequest, callOptions ...callopt.Option) (r *app.GetFileResponse, err error)
 	Upload(ctx context.Context, req *app.UploadFileRequest, callOptions ...callopt.Option) (r *app.UploadFileResponse, err error)
+	GetFileKey(ctx context.Context, req *app.GetFileKeyRequest, callOptions ...callopt.Option) (r *app.GetFileKeyResponse, err error)
 	Register(ctx context.Context, req *app.RegisteRequest, callOptions ...callopt.Option) (r *app.RegisteResponse, err error)
 	Login(ctx context.Context, req *app.LoginRequest, callOptions ...callopt.Option) (r *app.LoginResponse, err error)
 }
@@ -61,6 +61,11 @@ func (p *kAppServiceClient) GetFile(ctx context.Context, req *app.GetFileRequest
 func (p *kAppServiceClient) Upload(ctx context.Context, req *app.UploadFileRequest, callOptions ...callopt.Option) (r *app.UploadFileResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Upload(ctx, req)
+}
+
+func (p *kAppServiceClient) GetFileKey(ctx context.Context, req *app.GetFileKeyRequest, callOptions ...callopt.Option) (r *app.GetFileKeyResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFileKey(ctx, req)
 }
 
 func (p *kAppServiceClient) Register(ctx context.Context, req *app.RegisteRequest, callOptions ...callopt.Option) (r *app.RegisteResponse, err error) {

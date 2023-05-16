@@ -14,6 +14,10 @@ func NewStatus(code int, message string) *StatusError {
 	}
 }
 
+func (e *StatusError) WithErrMsg(msg string) *StatusError {
+	return NewStatus(e.Code, e.Message+msg)
+}
+
 func (e *StatusError) Error() string {
 	return fmt.Sprintf("[%v] %v", e.Code, e.Message)
 }
@@ -26,4 +30,6 @@ var (
 	InvalidParam = NewStatus(10000, "invalid param")
 
 	RegisterNameDuplicate = NewStatus(10001, "username is already registered")
+
+	NoPermission = NewStatus(10002, "no permission")
 )
