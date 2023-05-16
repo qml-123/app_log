@@ -26,4 +26,6 @@ var (
 	InvalidParam = NewStatus(10000, "invalid param")
 
 	RegisterNameDuplicate = NewStatus(10001, "username is already registered")
+
+	NoPermission = NewStatus(10002, "no permission")
 )

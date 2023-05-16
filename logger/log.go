@@ -123,9 +123,8 @@ func log(ctx context.Context, level, format string, v ...interface{}) {
 	// Write to logrus
 	_logrus.WithFields(logrus.Fields{
 		//"service_name":    serviceName,
-		"log_id":      logID,
-		"log_message": data.LogMessage,
-		"file_line":   data.FileLine,
+		"log_id":    logID,
+		"file_line": data.FileLine,
 	}).Log(logLevel, data.LogMessage)
 
 	// Write to elasticsearch
@@ -155,7 +154,7 @@ func handleLogs() {
 func sendToElasticsearch(logs []*LogData) {
 	bulkRequest := elasticClient.Bulk()
 	for _, log := range logs {
-		req := elastic.NewBulkIndexRequest().Index("logs").Doc(log)
+		req := elastic.NewBulkIndexRequest().Index("log_index").Doc(log)
 		bulkRequest = bulkRequest.Add(req)
 	}
 
