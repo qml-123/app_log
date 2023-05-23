@@ -2,10 +2,8 @@ package logger
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"runtime"
 	"sync"
@@ -43,26 +41,14 @@ func NewLogger(elasticURL []string, file string) error {
 	_logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	// Initialize elastic client
-	cert, err := tls.LoadX509KeyPair("output/bin/http_ca.crt", "output/bin/http_ca.key")
-	if err != nil {
-		return err
-	}
 
-	// 创建HTTP客户端并添加子签名证书
-	httpClient := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true, // 跳过证书验证
-				Certificates:       []tls.Certificate{cert},
-			},
-		},
-	}
-
-	// 初始化ES客户端并设置自定义的HTTP客户端
+	var err error
+	// 初始化elasticClient
 	elasticClient, err = elastic.NewClient(
-		elastic.SetURL(elasticURL...),
-		elastic.SetHttpClient(httpClient),
+		elastic.SetURL("https://es-ca7nr12x.public.tencentelasticsearch.com:9200"),
+		elastic.SetSniff(false), // SetSniff需要被设置为false，因为你正在使用公网IP
 		elastic.SetBasicAuth("elastic", "FOWrYfQbfnRa1_WMepPk"),
+		elastic.SetScheme("https"), // 设置使用https
 	)
 	if err != nil {
 		return err
