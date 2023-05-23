@@ -15,6 +15,7 @@ type Client interface {
 	GetFile(ctx context.Context, req *app.GetFileRequest, callOptions ...callopt.Option) (r *app.GetFileResponse, err error)
 	Upload(ctx context.Context, req *app.UploadFileRequest, callOptions ...callopt.Option) (r *app.UploadFileResponse, err error)
 	GetFileKey(ctx context.Context, req *app.GetFileKeyRequest, callOptions ...callopt.Option) (r *app.GetFileKeyResponse, err error)
+	GetFileChunkSize(ctx context.Context, req *app.GetFileChunkNumRequest, callOptions ...callopt.Option) (r *app.GetFileChunkNumResponse, err error)
 	Register(ctx context.Context, req *app.RegisteRequest, callOptions ...callopt.Option) (r *app.RegisteResponse, err error)
 	Login(ctx context.Context, req *app.LoginRequest, callOptions ...callopt.Option) (r *app.LoginResponse, err error)
 }
@@ -66,6 +67,11 @@ func (p *kAppServiceClient) Upload(ctx context.Context, req *app.UploadFileReque
 func (p *kAppServiceClient) GetFileKey(ctx context.Context, req *app.GetFileKeyRequest, callOptions ...callopt.Option) (r *app.GetFileKeyResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetFileKey(ctx, req)
+}
+
+func (p *kAppServiceClient) GetFileChunkSize(ctx context.Context, req *app.GetFileChunkNumRequest, callOptions ...callopt.Option) (r *app.GetFileChunkNumResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFileChunkSize(ctx, req)
 }
 
 func (p *kAppServiceClient) Register(ctx context.Context, req *app.RegisteRequest, callOptions ...callopt.Option) (r *app.RegisteResponse, err error) {

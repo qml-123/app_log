@@ -16,13 +16,21 @@ type Api struct {
 	Methods []*Methods `json:"methods"`
 }
 
+type ConsumerConfig struct {
+	ConsumerName string `json:"consumer_name"`
+	Topic        string `json:"topic"`
+}
+
 type Conf struct {
-	ServiceName   string   `json:"service_name"`
-	ListenPort    int      `json:"listen_port"`
-	ListenIp      string   `json:"listen_ip"`
-	ConsulAddRess string   `json:"consul_address"`
-	Api           []*Api   `json:"api"`
-	EsUrl         []string `json:"es_url"`
+	ServiceName        string            `json:"service_name"`
+	ListenPort         int               `json:"listen_port"`
+	ListenIp           string            `json:"listen_ip"`
+	ConsulAddRess      string            `json:"consul_address"`
+	Api                []*Api            `json:"api"`
+	EsUrl              []string          `json:"es_url"`
+	KafkaAddress       []string          `json:"kafka_address"`
+	KafkaConsumer      []*ConsumerConfig `json:"kafka_consumer"`
+	KafkaProducerTopic []string          `json:"kafka_producer_topic"`
 }
 
 func GetJsonFromFile(filePath string) (*Conf, error) {
