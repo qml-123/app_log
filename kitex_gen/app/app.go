@@ -1629,6 +1629,550 @@ func (p *UploadFileResponse) Field255DeepEqual(src *base.BaseData) bool {
 	return true
 }
 
+type GetFileChunkNumRequest struct {
+	UserId   int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
+	FileKey  string         `thrift:"file_key,2,required" frugal:"2,required,string" json:"file_key"`
+	BaseData *base.BaseData `thrift:"baseData,255" frugal:"255,default,base.BaseData" json:"baseData"`
+}
+
+func NewGetFileChunkNumRequest() *GetFileChunkNumRequest {
+	return &GetFileChunkNumRequest{}
+}
+
+func (p *GetFileChunkNumRequest) InitDefault() {
+	*p = GetFileChunkNumRequest{}
+}
+
+func (p *GetFileChunkNumRequest) GetUserId() (v int64) {
+	return p.UserId
+}
+
+func (p *GetFileChunkNumRequest) GetFileKey() (v string) {
+	return p.FileKey
+}
+
+var GetFileChunkNumRequest_BaseData_DEFAULT *base.BaseData
+
+func (p *GetFileChunkNumRequest) GetBaseData() (v *base.BaseData) {
+	if !p.IsSetBaseData() {
+		return GetFileChunkNumRequest_BaseData_DEFAULT
+	}
+	return p.BaseData
+}
+func (p *GetFileChunkNumRequest) SetUserId(val int64) {
+	p.UserId = val
+}
+func (p *GetFileChunkNumRequest) SetFileKey(val string) {
+	p.FileKey = val
+}
+func (p *GetFileChunkNumRequest) SetBaseData(val *base.BaseData) {
+	p.BaseData = val
+}
+
+var fieldIDToName_GetFileChunkNumRequest = map[int16]string{
+	1:   "user_id",
+	2:   "file_key",
+	255: "baseData",
+}
+
+func (p *GetFileChunkNumRequest) IsSetBaseData() bool {
+	return p.BaseData != nil
+}
+
+func (p *GetFileChunkNumRequest) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetUserId bool = false
+	var issetFileKey bool = false
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetUserId = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetFileKey = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetUserId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetFileKey {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetFileChunkNumRequest[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_GetFileChunkNumRequest[fieldId]))
+}
+
+func (p *GetFileChunkNumRequest) ReadField1(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.UserId = v
+	}
+	return nil
+}
+
+func (p *GetFileChunkNumRequest) ReadField2(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.FileKey = v
+	}
+	return nil
+}
+
+func (p *GetFileChunkNumRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseData = base.NewBaseData()
+	if err := p.BaseData.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *GetFileChunkNumRequest) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetFileChunkNumRequest"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *GetFileChunkNumRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.UserId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *GetFileChunkNumRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("file_key", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.FileKey); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *GetFileChunkNumRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("baseData", thrift.STRUCT, 255); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.BaseData.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
+func (p *GetFileChunkNumRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetFileChunkNumRequest(%+v)", *p)
+}
+
+func (p *GetFileChunkNumRequest) DeepEqual(ano *GetFileChunkNumRequest) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.UserId) {
+		return false
+	}
+	if !p.Field2DeepEqual(ano.FileKey) {
+		return false
+	}
+	if !p.Field255DeepEqual(ano.BaseData) {
+		return false
+	}
+	return true
+}
+
+func (p *GetFileChunkNumRequest) Field1DeepEqual(src int64) bool {
+
+	if p.UserId != src {
+		return false
+	}
+	return true
+}
+func (p *GetFileChunkNumRequest) Field2DeepEqual(src string) bool {
+
+	if strings.Compare(p.FileKey, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *GetFileChunkNumRequest) Field255DeepEqual(src *base.BaseData) bool {
+
+	if !p.BaseData.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type GetFileChunkNumResponse struct {
+	ChunkNum int32          `thrift:"chunk_num,1,required" frugal:"1,required,i32" json:"chunk_num"`
+	BaseData *base.BaseData `thrift:"baseData,255" frugal:"255,default,base.BaseData" json:"baseData"`
+}
+
+func NewGetFileChunkNumResponse() *GetFileChunkNumResponse {
+	return &GetFileChunkNumResponse{}
+}
+
+func (p *GetFileChunkNumResponse) InitDefault() {
+	*p = GetFileChunkNumResponse{}
+}
+
+func (p *GetFileChunkNumResponse) GetChunkNum() (v int32) {
+	return p.ChunkNum
+}
+
+var GetFileChunkNumResponse_BaseData_DEFAULT *base.BaseData
+
+func (p *GetFileChunkNumResponse) GetBaseData() (v *base.BaseData) {
+	if !p.IsSetBaseData() {
+		return GetFileChunkNumResponse_BaseData_DEFAULT
+	}
+	return p.BaseData
+}
+func (p *GetFileChunkNumResponse) SetChunkNum(val int32) {
+	p.ChunkNum = val
+}
+func (p *GetFileChunkNumResponse) SetBaseData(val *base.BaseData) {
+	p.BaseData = val
+}
+
+var fieldIDToName_GetFileChunkNumResponse = map[int16]string{
+	1:   "chunk_num",
+	255: "baseData",
+}
+
+func (p *GetFileChunkNumResponse) IsSetBaseData() bool {
+	return p.BaseData != nil
+}
+
+func (p *GetFileChunkNumResponse) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetChunkNum bool = false
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetChunkNum = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetChunkNum {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetFileChunkNumResponse[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_GetFileChunkNumResponse[fieldId]))
+}
+
+func (p *GetFileChunkNumResponse) ReadField1(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.ChunkNum = v
+	}
+	return nil
+}
+
+func (p *GetFileChunkNumResponse) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseData = base.NewBaseData()
+	if err := p.BaseData.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *GetFileChunkNumResponse) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetFileChunkNumResponse"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *GetFileChunkNumResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("chunk_num", thrift.I32, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.ChunkNum); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *GetFileChunkNumResponse) writeField255(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("baseData", thrift.STRUCT, 255); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.BaseData.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
+func (p *GetFileChunkNumResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetFileChunkNumResponse(%+v)", *p)
+}
+
+func (p *GetFileChunkNumResponse) DeepEqual(ano *GetFileChunkNumResponse) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.ChunkNum) {
+		return false
+	}
+	if !p.Field255DeepEqual(ano.BaseData) {
+		return false
+	}
+	return true
+}
+
+func (p *GetFileChunkNumResponse) Field1DeepEqual(src int32) bool {
+
+	if p.ChunkNum != src {
+		return false
+	}
+	return true
+}
+func (p *GetFileChunkNumResponse) Field255DeepEqual(src *base.BaseData) bool {
+
+	if !p.BaseData.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
 type GetFileRequest struct {
 	UserId    int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
 	FileKey   string         `thrift:"file_key,2,required" frugal:"2,required,string" json:"file_key"`
@@ -3916,6 +4460,8 @@ type AppService interface {
 
 	GetFileKey(ctx context.Context, req *GetFileKeyRequest) (r *GetFileKeyResponse, err error)
 
+	GetFileChunkSize(ctx context.Context, req *GetFileChunkNumRequest) (r *GetFileChunkNumResponse, err error)
+
 	Register(ctx context.Context, req *RegisteRequest) (r *RegisteResponse, err error)
 
 	Login(ctx context.Context, req *LoginRequest) (r *LoginResponse, err error)
@@ -3983,6 +4529,15 @@ func (p *AppServiceClient) GetFileKey(ctx context.Context, req *GetFileKeyReques
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *AppServiceClient) GetFileChunkSize(ctx context.Context, req *GetFileChunkNumRequest) (r *GetFileChunkNumResponse, err error) {
+	var _args AppServiceGetFileChunkSizeArgs
+	_args.Req = req
+	var _result AppServiceGetFileChunkSizeResult
+	if err = p.Client_().Call(ctx, "GetFileChunkSize", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 func (p *AppServiceClient) Register(ctx context.Context, req *RegisteRequest) (r *RegisteResponse, err error) {
 	var _args AppServiceRegisterArgs
 	_args.Req = req
@@ -4026,6 +4581,7 @@ func NewAppServiceProcessor(handler AppService) *AppServiceProcessor {
 	self.AddToProcessorMap("GetFile", &appServiceProcessorGetFile{handler: handler})
 	self.AddToProcessorMap("Upload", &appServiceProcessorUpload{handler: handler})
 	self.AddToProcessorMap("GetFileKey", &appServiceProcessorGetFileKey{handler: handler})
+	self.AddToProcessorMap("GetFileChunkSize", &appServiceProcessorGetFileChunkSize{handler: handler})
 	self.AddToProcessorMap("Register", &appServiceProcessorRegister{handler: handler})
 	self.AddToProcessorMap("Login", &appServiceProcessorLogin{handler: handler})
 	return self
@@ -4223,6 +4779,54 @@ func (p *appServiceProcessorGetFileKey) Process(ctx context.Context, seqId int32
 		result.Success = retval
 	}
 	if err2 = oprot.WriteMessageBegin("GetFileKey", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type appServiceProcessorGetFileChunkSize struct {
+	handler AppService
+}
+
+func (p *appServiceProcessorGetFileChunkSize) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := AppServiceGetFileChunkSizeArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("GetFileChunkSize", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := AppServiceGetFileChunkSizeResult{}
+	var retval *GetFileChunkNumResponse
+	if retval, err2 = p.handler.GetFileChunkSize(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetFileChunkSize: "+err2.Error())
+		oprot.WriteMessageBegin("GetFileChunkSize", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("GetFileChunkSize", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -5713,6 +6317,352 @@ func (p *AppServiceGetFileKeyResult) DeepEqual(ano *AppServiceGetFileKeyResult) 
 }
 
 func (p *AppServiceGetFileKeyResult) Field0DeepEqual(src *GetFileKeyResponse) bool {
+
+	if !p.Success.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type AppServiceGetFileChunkSizeArgs struct {
+	Req *GetFileChunkNumRequest `thrift:"req,1" frugal:"1,default,GetFileChunkNumRequest" json:"req"`
+}
+
+func NewAppServiceGetFileChunkSizeArgs() *AppServiceGetFileChunkSizeArgs {
+	return &AppServiceGetFileChunkSizeArgs{}
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) InitDefault() {
+	*p = AppServiceGetFileChunkSizeArgs{}
+}
+
+var AppServiceGetFileChunkSizeArgs_Req_DEFAULT *GetFileChunkNumRequest
+
+func (p *AppServiceGetFileChunkSizeArgs) GetReq() (v *GetFileChunkNumRequest) {
+	if !p.IsSetReq() {
+		return AppServiceGetFileChunkSizeArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *AppServiceGetFileChunkSizeArgs) SetReq(val *GetFileChunkNumRequest) {
+	p.Req = val
+}
+
+var fieldIDToName_AppServiceGetFileChunkSizeArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AppServiceGetFileChunkSizeArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewGetFileChunkNumRequest()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetFileChunkSize_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("AppServiceGetFileChunkSizeArgs(%+v)", *p)
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) DeepEqual(ano *AppServiceGetFileChunkSizeArgs) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.Req) {
+		return false
+	}
+	return true
+}
+
+func (p *AppServiceGetFileChunkSizeArgs) Field1DeepEqual(src *GetFileChunkNumRequest) bool {
+
+	if !p.Req.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type AppServiceGetFileChunkSizeResult struct {
+	Success *GetFileChunkNumResponse `thrift:"success,0,optional" frugal:"0,optional,GetFileChunkNumResponse" json:"success,omitempty"`
+}
+
+func NewAppServiceGetFileChunkSizeResult() *AppServiceGetFileChunkSizeResult {
+	return &AppServiceGetFileChunkSizeResult{}
+}
+
+func (p *AppServiceGetFileChunkSizeResult) InitDefault() {
+	*p = AppServiceGetFileChunkSizeResult{}
+}
+
+var AppServiceGetFileChunkSizeResult_Success_DEFAULT *GetFileChunkNumResponse
+
+func (p *AppServiceGetFileChunkSizeResult) GetSuccess() (v *GetFileChunkNumResponse) {
+	if !p.IsSetSuccess() {
+		return AppServiceGetFileChunkSizeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *AppServiceGetFileChunkSizeResult) SetSuccess(x interface{}) {
+	p.Success = x.(*GetFileChunkNumResponse)
+}
+
+var fieldIDToName_AppServiceGetFileChunkSizeResult = map[int16]string{
+	0: "success",
+}
+
+func (p *AppServiceGetFileChunkSizeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AppServiceGetFileChunkSizeResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AppServiceGetFileChunkSizeResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *AppServiceGetFileChunkSizeResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewGetFileChunkNumResponse()
+	if err := p.Success.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *AppServiceGetFileChunkSizeResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetFileChunkSize_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *AppServiceGetFileChunkSizeResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *AppServiceGetFileChunkSizeResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("AppServiceGetFileChunkSizeResult(%+v)", *p)
+}
+
+func (p *AppServiceGetFileChunkSizeResult) DeepEqual(ano *AppServiceGetFileChunkSizeResult) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field0DeepEqual(ano.Success) {
+		return false
+	}
+	return true
+}
+
+func (p *AppServiceGetFileChunkSizeResult) Field0DeepEqual(src *GetFileChunkNumResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

@@ -19,12 +19,13 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "AppService"
 	handlerType := (*app.AppService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Ping":       kitex.NewMethodInfo(pingHandler, newAppServicePingArgs, newAppServicePingResult, false),
-		"GetFile":    kitex.NewMethodInfo(getFileHandler, newAppServiceGetFileArgs, newAppServiceGetFileResult, false),
-		"Upload":     kitex.NewMethodInfo(uploadHandler, newAppServiceUploadArgs, newAppServiceUploadResult, false),
-		"GetFileKey": kitex.NewMethodInfo(getFileKeyHandler, newAppServiceGetFileKeyArgs, newAppServiceGetFileKeyResult, false),
-		"Register":   kitex.NewMethodInfo(registerHandler, newAppServiceRegisterArgs, newAppServiceRegisterResult, false),
-		"Login":      kitex.NewMethodInfo(loginHandler, newAppServiceLoginArgs, newAppServiceLoginResult, false),
+		"Ping":             kitex.NewMethodInfo(pingHandler, newAppServicePingArgs, newAppServicePingResult, false),
+		"GetFile":          kitex.NewMethodInfo(getFileHandler, newAppServiceGetFileArgs, newAppServiceGetFileResult, false),
+		"Upload":           kitex.NewMethodInfo(uploadHandler, newAppServiceUploadArgs, newAppServiceUploadResult, false),
+		"GetFileKey":       kitex.NewMethodInfo(getFileKeyHandler, newAppServiceGetFileKeyArgs, newAppServiceGetFileKeyResult, false),
+		"GetFileChunkSize": kitex.NewMethodInfo(getFileChunkSizeHandler, newAppServiceGetFileChunkSizeArgs, newAppServiceGetFileChunkSizeResult, false),
+		"Register":         kitex.NewMethodInfo(registerHandler, newAppServiceRegisterArgs, newAppServiceRegisterResult, false),
+		"Login":            kitex.NewMethodInfo(loginHandler, newAppServiceLoginArgs, newAppServiceLoginResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "app",
@@ -112,6 +113,24 @@ func newAppServiceGetFileKeyResult() interface{} {
 	return app.NewAppServiceGetFileKeyResult()
 }
 
+func getFileChunkSizeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*app.AppServiceGetFileChunkSizeArgs)
+	realResult := result.(*app.AppServiceGetFileChunkSizeResult)
+	success, err := handler.(app.AppService).GetFileChunkSize(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newAppServiceGetFileChunkSizeArgs() interface{} {
+	return app.NewAppServiceGetFileChunkSizeArgs()
+}
+
+func newAppServiceGetFileChunkSizeResult() interface{} {
+	return app.NewAppServiceGetFileChunkSizeResult()
+}
+
 func registerHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*app.AppServiceRegisterArgs)
 	realResult := result.(*app.AppServiceRegisterResult)
@@ -193,6 +212,16 @@ func (p *kClient) GetFileKey(ctx context.Context, req *app.GetFileKeyRequest) (r
 	_args.Req = req
 	var _result app.AppServiceGetFileKeyResult
 	if err = p.c.Call(ctx, "GetFileKey", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetFileChunkSize(ctx context.Context, req *app.GetFileChunkNumRequest) (r *app.GetFileChunkNumResponse, err error) {
+	var _args app.AppServiceGetFileChunkSizeArgs
+	_args.Req = req
+	var _result app.AppServiceGetFileChunkSizeResult
+	if err = p.c.Call(ctx, "GetFileChunkSize", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
